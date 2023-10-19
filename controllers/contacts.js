@@ -2,7 +2,16 @@ const { Contact } = require("../models/contact");
 const { HttpError, controllerWrapper } = require("../helpers/index");
 
 const getAll = async (req, res) => {
-  const result = await Contact.find();
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 20, favorite } = req.query;
+  const skip = (page - 1) * limit;
+
+  const isfavorite = favorite ? { favorite: favorite } : {};
+
+  const result = await Contact.find({ owner, ...isfavorite }, "-owner", {
+    skip,
+    limit,
+  });
   res.status(200).json(result);
 };
 
@@ -16,7 +25,10 @@ const getById = async (req, res) => {
 };
 
 const add = async (req, res) => {
-  const result = await Contact.create(req.body);
+  console.log(req.user);
+  const { _id: owner } = req.user;
+  console.log(owner);
+  const result = await Contact.create({ ...req.body, owner });
   res.status(201).json(result);
 };
 
