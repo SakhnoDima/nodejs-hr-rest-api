@@ -14,13 +14,15 @@ const { validateBody, isValidId, authenticate } = require("../../middlewares");
 
 const { schemas } = require("../../models/contact.js");
 
-router.get("/", authenticate, getAll);
+router.use(authenticate);
 
-router.get("/:contactId", authenticate, isValidId, getById);
+router.get("/", getAll);
 
-router.post("/", authenticate, validateBody(schemas.addSchema), add);
+router.get("/:contactId", isValidId, getById);
 
-router.delete("/:contactId", authenticate, isValidId, remove);
+router.post("/", validateBody(schemas.addSchema), add);
+
+router.delete("/:contactId", isValidId, remove);
 
 router.put(
   "/:contactId",
