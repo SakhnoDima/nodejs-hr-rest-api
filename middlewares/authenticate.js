@@ -12,9 +12,11 @@ const authenticate = async (req, res, next) => {
     const id = await isValidToken(token);
 
     const user = await User.findById(id);
+
     if (!user || !user.token || user.token !== token) {
       next(HttpError(401));
     }
+
     req.user = user;
     next();
   } catch {
