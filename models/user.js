@@ -30,6 +30,14 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Avatar is required"],
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, "Verify token is required"],
+    },
   },
   { versionKey: false }
 );
@@ -42,9 +50,13 @@ const userJoiSchema = Joi.object({
   email: Joi.string().pattern(emailRegex).required(),
 });
 
+const updateVerifyByEmail = Joi.object({
+  email: Joi.string().pattern(emailRegex).required(),
+});
+
 userSchema.post("save", handleMongooseError);
 
 const User = model("user", userSchema);
-const schemas = { userJoiSchema, subscriptSchema };
+const schemas = { userJoiSchema, subscriptSchema, updateVerifyByEmail };
 
 module.exports = { User, schemas };
